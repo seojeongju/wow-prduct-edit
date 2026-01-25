@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Upload, Wand2, X, Plus, Info, Image as ImageIcon, Smile, Briefcase, Heart } from 'lucide-react';
+import { Upload, Wand2, X, Plus, Info, Image as ImageIcon, Smile, Briefcase, Heart, Sparkles } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
