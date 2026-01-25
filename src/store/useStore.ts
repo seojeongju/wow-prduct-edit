@@ -27,6 +27,7 @@ export const useStore = create<AppState>((set, get) => ({
         tone: 'professional',
         imageUrl: null,
         layoutOrder: ['hook', 'image', 'features', 'trust', 'closing'],
+        canvasSize: { width: 860, mode: 'scroll' }, // Default SmartStore size
     },
 
     setStep: (step) => set({ currentStep: step }),

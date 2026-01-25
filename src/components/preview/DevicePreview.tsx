@@ -95,15 +95,18 @@ export default function DevicePreview({ data, isLoading }: DevicePreviewProps) {
                 layout
                 initial={false}
                 animate={{
-                    width: viewMode === 'mobile' ? 375 : '90%',
+                    width: viewMode === 'mobile' ? 375 : (data.canvasSize?.width || '90%'),
                     height: viewMode === 'mobile' ? 680 : '85%',
                     borderRadius: viewMode === 'mobile' ? 32 : 12,
                 }}
                 transition={{ type: "spring", stiffness: 200, damping: 25 }}
                 className={cn(
-                    "relative bg-white shadow-2xl border-4 border-slate-900/10 overflow-hidden flex flex-col",
+                    "relative bg-white shadow-2xl border-4 border-slate-900/10 overflow-hidden flex flex-col transition-all duration-300",
                     viewMode === 'mobile' ? "border-slate-800" : "border-slate-200"
                 )}
+                style={{
+                    maxWidth: viewMode === 'mobile' ? '100%' : '100%',
+                }}
             >
                 {/* Browser/Phone Header Bar */}
                 <div className={cn(

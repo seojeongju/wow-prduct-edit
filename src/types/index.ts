@@ -10,5 +10,10 @@ export interface ProductData {
         trust?: string;
         closing?: string;
     };
-    layoutOrder?: string[]; // e.g. ['hook', 'image', 'features', ...]
+    layoutOrder?: string[];
+    canvasSize?: {
+        width: number;
+        height?: number; // Optional (Auto if undefined)
+        mode: 'scroll' | 'fixed'; // 'scroll' for detail pages, 'fixed' for cards/banners
+    };
 }

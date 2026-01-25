@@ -175,6 +175,71 @@ export default function LayoutEditor() {
                 </div>
             </div>
 
+            {/* Canvas Size Settings (New) */}
+            <div className="space-y-3">
+                <Label className="flex items-center gap-2">
+                    <LayoutTemplate className="w-4 h-4" /> 캔버스 사이즈
+                </Label>
+                <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-4">
+                    {/* Presets */}
+                    <div className="flex gap-2">
+                        {[
+                            { label: '스마트스토어 (860px)', w: 860, h: undefined },
+                            { label: '인스타그램 (1080px)', w: 1080, h: 1080 },
+                            { label: 'FHD (1920px)', w: 1920, h: undefined },
+                        ].map((preset, idx) => (
+                            <button
+                                key={idx}
+                                onClick={() => updateProductData({
+                                    canvasSize: {
+                                        width: preset.w,
+                                        height: preset.h,
+                                        mode: preset.h ? 'fixed' : 'scroll'
+                                    }
+                                })}
+                                className={cn(
+                                    "px-3 py-1.5 text-xs font-medium rounded-md border transition-colors",
+                                    productData.canvasSize?.width === preset.w
+                                        ? "bg-white border-indigo-500 text-indigo-600 shadow-sm"
+                                        : "bg-white border-slate-200 text-slate-600 hover:bg-slate-100"
+                                )}
+                            >
+                                {preset.label}
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* Manual Input */}
+                    <div className="flex items-center gap-3">
+                        <div className="flex-1 space-y-1">
+                            <span className="text-[10px] text-slate-500 font-bold uppercase">Width (px)</span>
+                            <input
+                                type="number"
+                                value={productData.canvasSize?.width || 860}
+                                onChange={(e) => updateProductData({
+                                    canvasSize: {
+                                        ...productData.canvasSize,
+                                        width: Number(e.target.value),
+                                        mode: 'scroll' // Manual input usually implies detailed page
+                                    } as any
+                                })}
+                                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:border-indigo-500 outline-none"
+                            />
+                        </div>
+                        <div className="flex items-center pt-5 text-slate-400">×</div>
+                        <div className="flex-1 space-y-1">
+                            <span className="text-[10px] text-slate-500 font-bold uppercase">Height</span>
+                            <input
+                                type="text"
+                                value={productData.canvasSize?.height || 'Auto'}
+                                disabled
+                                className="w-full px-3 py-2 bg-slate-100 border border-slate-200 rounded-lg text-sm text-slate-400 cursor-not-allowed"
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             {/* Draggable List */}
             <div className="space-y-3">
                 <Label className="flex items-center gap-2 mb-2">
