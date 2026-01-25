@@ -126,6 +126,8 @@ export const useStore = create<AppState>()(
         {
             name: 'smart-detail-storage', // unique name
             storage: createJSONStorage(() => localStorage),
+            skipHydration: true, // Fix for Next.js SSR hydration mismatch
+            version: 1,
         }
     )
 );

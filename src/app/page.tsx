@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+"use client";
+
+import React, { useState, useEffect } from 'react';
 import ProductInput from '@/components/dashboard/ProductInput';
-import DevicePreview from '@/components/preview/DevicePreview'; // Updated Import
-import { ProductData } from '@/types';
-import { Sparkles, Zap } from 'lucide-react';
-import { motion } from 'framer-motion';
+import DevicePreview from '@/components/preview/DevicePreview';
 import { useStore } from '@/store/useStore';
 import { Button } from '@/components/ui/button';
 import ImageEditor from '@/components/dashboard/ImageEditor';
@@ -12,7 +11,7 @@ import LayoutEditor from '@/components/dashboard/LayoutEditor';
 import ExportPanel from '@/components/dashboard/ExportPanel';
 import Logo from '@/components/ui/Logo';
 
-export default function Home() {
+function EditorContent() {
   const { currentStep, setStep, productData, updateProductData, isLoading, setLoading, generateCopy } = useStore();
 
   // Steps definition for UI
@@ -73,17 +72,13 @@ export default function Home() {
         </div>
 
         <div className="flex items-center gap-3">
-          {/* Simple User Profile or Actions */}
           <div className="w-8 h-8 rounded-full bg-slate-200" />
         </div>
       </header>
 
       {/* Main Workspace */}
       <div className="flex-1 flex overflow-hidden z-10 relative">
-
-        {/* Left Panel: Dynamic Content based on Step */}
         <div className="w-full lg:w-[500px] flex-none h-full overflow-y-auto scrollbar-hide border-r border-slate-200/60 bg-white/40 backdrop-blur-3xl transition-all">
-
           {currentStep === 1 && (
             !productData.generatedContent ? (
               <ProductInput
@@ -108,16 +103,13 @@ export default function Home() {
           {currentStep === 4 && (
             <ExportPanel />
           )}
-
         </div>
 
-        {/* Right Panel: Preview Studio */}
         <div className="hidden lg:flex flex-1 items-center justify-center bg-slate-100/50 relative overflow-hidden">
           <div className="relative z-10 w-full h-full flex items-center justify-center p-8">
             <DevicePreview data={productData} isLoading={isLoading} />
           </div>
 
-          {/* Global Next/Prev Navigation for Demo */}
           {currentStep < 4 && (
             <div className="absolute bottom-8 right-8 flex gap-2 z-20">
               <Button
@@ -139,4 +131,17 @@ export default function Home() {
       </div>
     </main>
   );
+}
+
+export default function Home() {
+  const [hasHydrated, setHasHydrated] = useState(false);
+
+  useEffect(() => {
+    useStore.persist.rehydrate();
+    setHasHydrated(true);
+  }, []);
+
+  if (!hasHydrated) return null;
+
+  return <EditorContent />;
 }
