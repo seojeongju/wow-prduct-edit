@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Upload, Wand2, X, Plus } from 'lucide-react';
+import { Upload, Wand2, X, Plus, Info, Image as ImageIcon, Smile, Briefcase, Heart } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { ProductData } from '@/types';
+import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 
 interface ProductInputProps {
@@ -19,34 +19,25 @@ interface ProductInputProps {
 export default function ProductInput({ data, onChange, onGenerate, isGenerating }: ProductInputProps) {
     const [dragActive, setDragActive] = useState(false);
 
+    // Handlers (File/Drag)
     const handleDrag = (e: React.DragEvent) => {
         e.preventDefault();
         e.stopPropagation();
-        if (e.type === "dragenter" || e.type === "dragover") {
-            setDragActive(true);
-        } else if (e.type === "dragleave") {
-            setDragActive(false);
-        }
+        if (e.type === "dragenter" || e.type === "dragover") setDragActive(true);
+        else if (e.type === "dragleave") setDragActive(false);
     };
 
     const handleDrop = (e: React.DragEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
-        setDragActive(false);
-        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-            handleFile(e.dataTransfer.files[0]);
-        }
+        e.preventDefault(); e.stopPropagation(); setDragActive(false);
+        if (e.dataTransfer.files?.[0]) handleFile(e.dataTransfer.files[0]);
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        e.preventDefault();
-        if (e.target.files && e.target.files[0]) {
-            handleFile(e.target.files[0]);
-        }
+        if (e.target.files?.[0]) handleFile(e.target.files[0]);
     };
 
     const handleFile = (file: File) => {
-        // In a real app, upload to server/S3. Here we use object URL for preview.
+        // In production, use standard upload. Here utilize objectURL
         const url = URL.createObjectURL(file);
         onChange({ ...data, imageUrl: url });
     };
@@ -58,138 +49,174 @@ export default function ProductInput({ data, onChange, onGenerate, isGenerating 
     };
 
     return (
-        <div className="space-y-8 p-6 pb-24">
+        <div className="p-6 pb-32 space-y-8 max-w-xl mx-auto">
+
+            {/* Intro Section */}
             <div className="space-y-1">
-                <h2 className="text-2xl font-bold tracking-tight text-neutral-900">상품 정보 입력</h2>
-                <p className="text-neutral-500">AI가 매력적인 상세페이지를 만들 수 있도록 정보를 알려주세요.</p>
+                <h2 className="text-xl font-bold tracking-tight text-slate-900">상품 정보 입력</h2>
+                <p className="text-sm text-slate-500">
+                    AI가 매력적인 상세페이지를 완성할 수 있도록 핵심 정보를 알려주세요.
+                </p>
             </div>
 
-            <div className="space-y-6">
-                {/* Image Upload */}
-                <div className="space-y-2">
-                    <Label>대표 상품 이미지</Label>
-                    <div
-                        className={`relative flex flex-col items-center justify-center w-full h-64 rounded-xl border-2 border-dashed transition-all cursor-pointer overflow-hidden
-              ${dragActive ? "border-blue-500 bg-blue-50/50" : "border-neutral-200 bg-neutral-50 hover:bg-neutral-100"}
-              ${data.imageUrl ? "border-none" : ""}
-            `}
-                        onDragEnter={handleDrag}
-                        onDragLeave={handleDrag}
-                        onDragOver={handleDrag}
-                        onDrop={handleDrop}
-                    >
-                        <input type="file" className="hidden" id="image-upload" accept="image/*" onChange={handleChange} />
-
-                        {data.imageUrl ? (
-                            <div className="relative w-full h-full group">
-                                <img src={data.imageUrl} alt="Preview" className="w-full h-full object-cover" />
-                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                    <Button
-                                        variant="secondary"
-                                        size="sm"
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            onChange({ ...data, imageUrl: null });
-                                        }}
-                                    >
-                                        <X className="w-4 h-4 mr-2" /> 이미지 제거
-                                    </Button>
-                                </div>
-                            </div>
-                        ) : (
-                            <label htmlFor="image-upload" className="flex flex-col items-center justify-center w-full h-full cursor-pointer">
-                                <div className="p-4 rounded-full bg-white shadow-sm mb-4">
-                                    <Upload className="w-6 h-6 text-blue-600" />
-                                </div>
-                                <p className="mb-2 text-sm text-neutral-900 font-medium">클릭하여 업로드 또는 드래그</p>
-                                <p className="text-xs text-neutral-500">PNG, JPG up to 10MB</p>
-                            </label>
-                        )}
-                    </div>
-                </div>
-
-                {/* Basic Info */}
-                <div className="space-y-4">
-                    <div className="space-y-2">
-                        <Label htmlFor="productName">상품명</Label>
-                        <Input
-                            id="productName"
-                            placeholder="예: 프리미엄 무소음 탁상시계"
-                            value={data.productName}
-                            onChange={(e) => onChange({ ...data, productName: e.target.value })}
-                        />
+            <div className="space-y-8">
+                {/* Section 1: Basic Info */}
+                <section className="space-y-5">
+                    <div className="flex items-center gap-2 mb-2">
+                        <span className="flex items-center justify-center w-6 h-6 rounded-full bg-slate-900 text-white text-xs font-bold">1</span>
+                        <h3 className="font-semibold text-slate-900">기본 정보</h3>
                     </div>
 
-                    <div className="space-y-2">
-                        <Label htmlFor="targetAudience">타겟 고객 (메인 타겟)</Label>
-                        <Input
-                            id="targetAudience"
-                            placeholder="예: 2030 자취생, 인테리어 관심 많은 신혼부부"
-                            value={data.targetAudience}
-                            onChange={(e) => onChange({ ...data, targetAudience: e.target.value })}
-                        />
-                    </div>
-                </div>
-
-                {/* USPs */}
-                <div className="space-y-3">
-                    <Label>핵심 장점 3가지 (USP)</Label>
-                    {data.benefits.map((benefit, index) => (
-                        <div key={index} className="flex gap-2">
-                            <div className="flex items-center justify-center w-8 h-12 text-sm font-bold text-neutral-300">
-                                {index + 1}
-                            </div>
+                    <div className="bg-white rounded-2xl p-5 shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-slate-100 space-y-4">
+                        <div className="space-y-2">
+                            <Label className="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1">상품명</Label>
                             <Input
-                                placeholder={`장점 ${index + 1} (예: 도서관보다 조용한 무소음 무브먼트)`}
-                                value={benefit}
-                                onChange={(e) => updateBenefit(index, e.target.value)}
+                                placeholder="예: 프리미엄 무소음 탁상시계"
+                                value={data.productName}
+                                onChange={(e) => onChange({ ...data, productName: e.target.value })}
+                                className="font-medium text-lg border-transparent bg-slate-50 focus:bg-white focus:border-indigo-500 transition-all shadow-inner"
                             />
                         </div>
-                    ))}
-                </div>
+                        <div className="space-y-2">
+                            <Label className="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1">타겟 고객</Label>
+                            <Input
+                                placeholder="예: 인테리어에 관심 많은 30대 신혼부부"
+                                value={data.targetAudience}
+                                onChange={(e) => onChange({ ...data, targetAudience: e.target.value })}
+                                className="border-slate-200 focus:border-indigo-500"
+                            />
+                        </div>
+                    </div>
+                </section>
 
-                {/* Tone */}
-                <div className="space-y-2">
-                    <Label>문구 톤앤매너</Label>
-                    <div className="grid grid-cols-3 gap-3">
-                        {[
-                            { id: 'professional', label: '신뢰감 있는', desc: '전문적이고 분석적인' },
-                            { id: 'emotional', label: '감성적인', desc: '따뜻하고 공감가는' },
-                            { id: 'witty', label: '유머러스한', desc: '재치있고 친근한' }
-                        ].map((tone) => (
-                            <div
-                                key={tone.id}
-                                onClick={() => onChange({ ...data, tone: tone.id as any })}
-                                className={`cursor-pointer rounded-lg border p-4 transition-all hover:bg-neutral-50
-                    ${data.tone === tone.id
-                                        ? "border-blue-600 bg-blue-50/50 ring-1 ring-blue-600"
-                                        : "border-neutral-200"
-                                    }`}
-                            >
-                                <div className="font-medium text-sm mb-1">{tone.label}</div>
-                                <div className="text-xs text-neutral-500">{tone.desc}</div>
+                {/* Section 2: Image */}
+                <section className="space-y-5">
+                    <div className="flex items-center gap-2 mb-2">
+                        <span className="flex items-center justify-center w-6 h-6 rounded-full bg-slate-900 text-white text-xs font-bold">2</span>
+                        <h3 className="font-semibold text-slate-900">대표 이미지</h3>
+                    </div>
+
+                    <div className="group relative">
+                        <div
+                            className={cn(
+                                "relative flex flex-col items-center justify-center w-full aspect-[4/3] rounded-2xl border-2 border-dashed transition-all cursor-pointer overflow-hidden",
+                                dragActive ? "border-indigo-500 bg-indigo-50/50" : "border-slate-200 bg-slate-50/50 hover:bg-slate-50 hover:border-slate-300",
+                                data.imageUrl ? "border-none bg-black" : ""
+                            )}
+                            onDragEnter={handleDrag}
+                            onDragLeave={handleDrag}
+                            onDragOver={handleDrag}
+                            onDrop={handleDrop}
+                        >
+                            <input type="file" className="hidden" id="upload-box" accept="image/*" onChange={handleChange} />
+
+                            {data.imageUrl ? (
+                                <>
+                                    <img src={data.imageUrl} alt="Uploaded" className="w-full h-full object-contain" />
+                                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center gap-2">
+                                        <Button size="sm" variant="secondary" onClick={(e) => { e.preventDefault(); document.getElementById('upload-box')?.click(); }}>변경</Button>
+                                        <Button size="sm" className="bg-red-500 hover:bg-red-600 text-white border-none" onClick={(e) => { e.preventDefault(); onChange({ ...data, imageUrl: null }); }}>삭제</Button>
+                                    </div>
+                                </>
+                            ) : (
+                                <label htmlFor="upload-box" className="flex flex-col items-center justify-center w-full h-full cursor-pointer p-6 text-center">
+                                    <div className="w-16 h-16 rounded-2xl bg-white shadow-lg shadow-indigo-100 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                                        <ImageIcon className="w-8 h-8 text-indigo-500" />
+                                    </div>
+                                    <p className="font-semibold text-slate-700">이미지 업로드</p>
+                                    <p className="text-xs text-slate-400 mt-1 max-w-[200px]">
+                                        이미지를 이곳에 드래그하거나<br />클릭해서 업로드하세요
+                                    </p>
+                                </label>
+                            )}
+                        </div>
+                    </div>
+                </section>
+
+                {/* Section 3: Benefits (USP) */}
+                <section className="space-y-5">
+                    <div className="flex items-center gap-2 mb-2">
+                        <span className="flex items-center justify-center w-6 h-6 rounded-full bg-slate-900 text-white text-xs font-bold">3</span>
+                        <h3 className="font-semibold text-slate-900">핵심 장점 3가지</h3>
+                    </div>
+
+                    <div className="space-y-3">
+                        {data.benefits.map((benefit, i) => (
+                            <div key={i} className="relative group">
+                                <div className="absolute left-3 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center rounded-md bg-indigo-50 text-indigo-600 text-xs font-bold font-mono">
+                                    {i + 1}
+                                </div>
+                                <Input
+                                    value={benefit}
+                                    onChange={(e) => updateBenefit(i, e.target.value)}
+                                    className="pl-12 py-6 border-slate-200 focus:border-indigo-500 shadow-sm transition-all focus:ring-4 focus:ring-indigo-100"
+                                    placeholder={`장점 ${i + 1} 입력 (예: 국내 유일 100% 방수)`}
+                                />
                             </div>
                         ))}
                     </div>
-                </div>
+                </section>
+
+                {/* Section 4: Tone */}
+                <section className="space-y-5">
+                    <div className="flex items-center gap-2 mb-2">
+                        <span className="flex items-center justify-center w-6 h-6 rounded-full bg-slate-900 text-white text-xs font-bold">4</span>
+                        <h3 className="font-semibold text-slate-900">문구 스타일</h3>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-3">
+                        {[
+                            { id: 'professional', label: '전문적인', icon: Briefcase, color: "text-blue-500 bg-blue-50" },
+                            { id: 'emotional', label: '감성적인', icon: Heart, color: "text-rose-500 bg-rose-50" },
+                            { id: 'witty', label: '유쾌한', icon: Smile, color: "text-amber-500 bg-amber-50" },
+                        ].map((item) => {
+                            const isSelected = data.tone === item.id;
+                            const Icon = item.icon;
+                            return (
+                                <button
+                                    key={item.id}
+                                    onClick={() => onChange({ ...data, tone: item.id as any })}
+                                    className={cn(
+                                        "relative flex flex-col items-center justify-center gap-2 p-4 rounded-xl border-2 transition-all duration-200 outline-none",
+                                        isSelected
+                                            ? "border-indigo-600 bg-indigo-50/30 text-indigo-900 shadow-lg shadow-indigo-500/10"
+                                            : "border-slate-100 bg-white text-slate-500 hover:border-slate-300 hover:bg-slate-50"
+                                    )}
+                                >
+                                    <div className={cn("p-2 rounded-full transition-transform duration-300", item.color, isSelected && "scale-110")}>
+                                        <Icon className="w-5 h-5" />
+                                    </div>
+                                    <span className="text-xs font-semibold">{item.label}</span>
+                                    {isSelected && (
+                                        <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-indigo-600 animate-pulse" />
+                                    )}
+                                </button>
+                            )
+                        })}
+                    </div>
+                </section>
+
             </div>
 
-            <div className="fixed bottom-0 left-0 w-full lg:w-1/2 p-6 bg-white/80 backdrop-blur-md border-t border-neutral-200 z-10">
+            {/* Floating Action Button area */}
+            <div className="fixed lg:absolute bottom-0 left-0 w-full lg:w-[inherit] p-6 bg-white/80 backdrop-blur-xl border-t border-slate-200/60 z-20">
                 <Button
-                    size="lg"
-                    className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg shadow-blue-500/25"
                     onClick={onGenerate}
                     disabled={isGenerating}
+                    className={cn(
+                        "w-full h-14 text-lg font-bold rounded-xl shadow-xl shadow-indigo-500/20 transition-all hover:scale-[1.02] active:scale-[0.98]",
+                        isGenerating ? "bg-slate-800" : "bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white"
+                    )}
                 >
                     {isGenerating ? (
                         <>
-                            <Wand2 className="w-5 h-5 mr-2 animate-spin" />
-                            AI 상세페이지 생성 중...
+                            <Wand2 className="w-5 h-5 mr-2 animate-spin text-indigo-300" />
+                            <span className="animate-pulse">AI가 제작 중입니다...</span>
                         </>
                     ) : (
                         <>
-                            <Wand2 className="w-5 h-5 mr-2" />
-                            AI 상세페이지 생성하기
+                            <Sparkles className="w-5 h-5 mr-2 fill-white/20" />
+                            상세페이지 생성하기
                         </>
                     )}
                 </Button>
