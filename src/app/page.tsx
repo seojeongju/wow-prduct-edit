@@ -9,6 +9,7 @@ import { motion } from 'framer-motion';
 import { useStore } from '@/store/useStore'; // Assuming this path for useStore
 import { Button } from '@/components/ui/button'; // Assuming this path for Button
 import ImageEditor from '@/components/dashboard/ImageEditor'; // Assuming this path for Button
+import CopyEditor from '@/components/dashboard/CopyEditor';
 
 export default function Home() {
   const { currentStep, setStep, productData, updateProductData, isLoading, setLoading, generateCopy } = useStore();
@@ -85,12 +86,16 @@ export default function Home() {
         <div className="w-full lg:w-[500px] flex-none h-full overflow-y-auto scrollbar-hide border-r border-slate-200/60 bg-white/40 backdrop-blur-3xl transition-all">
 
           {currentStep === 1 && (
-            <ProductInput
-              data={productData}
-              onChange={updateProductData}
-              onGenerate={generateCopy}
-              isGenerating={isLoading}
-            />
+            !productData.generatedContent ? (
+              <ProductInput
+                data={productData}
+                onChange={updateProductData}
+                onGenerate={generateCopy}
+                isGenerating={isLoading}
+              />
+            ) : (
+              <CopyEditor />
+            )
           )}
 
           {currentStep === 2 && (

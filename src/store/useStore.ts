@@ -62,7 +62,7 @@ export const useStore = create<AppState>((set, get) => ({
             set((state) => ({
                 productData: { ...state.productData, generatedContent },
                 isLoading: false,
-                currentStep: Math.min(state.currentStep + 1, 4) // Auto advance to next step
+                // currentStep stay at 1 to allow editing
             }));
 
         } catch (error) {
