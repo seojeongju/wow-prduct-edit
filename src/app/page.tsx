@@ -8,6 +8,7 @@ import { Sparkles, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useStore } from '@/store/useStore'; // Assuming this path for useStore
 import { Button } from '@/components/ui/button'; // Assuming this path for Button
+import ImageEditor from '@/components/dashboard/ImageEditor'; // Assuming this path for Button
 
 export default function Home() {
   const { currentStep, setStep, productData, updateProductData, isLoading, setLoading, generateCopy } = useStore();
@@ -93,16 +94,7 @@ export default function Home() {
           )}
 
           {currentStep === 2 && (
-            <div className="p-10 flex flex-col items-center justify-center h-full text-center space-y-4">
-              <div className="w-16 h-16 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-500 mb-2">
-                <Zap className="w-8 h-8" />
-              </div>
-              <h2 className="text-xl font-bold">이미지 스튜디오 (준비중)</h2>
-              <p className="text-slate-500 text-sm max-w-xs">
-                AI 배경 제거 및 생성 기능이 이 단계에 구현될 예정입니다.
-              </p>
-              <Button onClick={() => setStep(3)} variant="outline">다음 단계 미리보기</Button>
-            </div>
+            <ImageEditor />
           )}
 
           {currentStep > 2 && (
