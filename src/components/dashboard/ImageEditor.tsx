@@ -10,7 +10,7 @@ import { cn, downloadImage } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 
 export default function ImageEditor() {
-    const { productData, updateProductData, nextStep, generateImage, isLoading } = useStore();
+    const { productData, updateProductData, setStep, generateImage, isLoading } = useStore();
     const [activeTab, setActiveTab] = useState<'edit' | 'generate'>('edit');
     const [prompt, setPrompt] = useState('');
 
@@ -113,7 +113,7 @@ export default function ImageEditor() {
                                 size="icon"
                                 variant="secondary"
                                 className="rounded-full shadow-lg bg-white/90 backdrop-blur"
-                                onClick={() => downloadImage(currentImage, `smart-detail-${Date.now()}.png`)}
+                                onClick={() => downloadImage(currentImage, `wow-ai-detail-${Date.now()}.png`)}
                                 title="이미지 다운로드"
                             >
                                 <Download className="w-4 h-4 text-slate-700" />
@@ -218,7 +218,7 @@ export default function ImageEditor() {
                 </Button>
                 <Button
                     className="flex-[2] h-12 bg-slate-900 text-white hover:bg-slate-800 shadow-xl shadow-slate-900/10"
-                    onClick={nextStep}
+                    onClick={() => setStep(3)}
                     disabled={isBusy}
                 >
                     다음 단계로 (디자인)

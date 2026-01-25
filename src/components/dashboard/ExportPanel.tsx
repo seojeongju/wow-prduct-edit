@@ -24,7 +24,7 @@ export default function ExportPanel() {
             // High quality scale
             const dataUrl = await toPng(node, { cacheBust: true, pixelRatio: 2 });
             const link = document.createElement('a');
-            link.download = `smart-detail-${Date.now()}.png`;
+            link.download = `wow-ai-detail-${Date.now()}.png`;
             link.href = dataUrl;
             link.click();
         } catch (error) {

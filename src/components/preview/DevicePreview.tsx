@@ -167,7 +167,7 @@ export default function DevicePreview({ data, isLoading }: DevicePreviewProps) {
 
                             {/* Footer info */}
                             <div className="p-8 text-center text-slate-300 text-[10px]" style={{ backgroundColor: styleConfig.backgroundColor, filter: 'brightness(95%)' }}>
-                                Designed by Smart Detail
+                                Designed by WOW AI Smart Detail
                             </div>
                         </div>
                     )}
