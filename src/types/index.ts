@@ -14,6 +14,11 @@ export interface ProductData {
     canvasSize?: {
         width: number;
         height?: number; // Optional (Auto if undefined)
-        mode: 'scroll' | 'fixed'; // 'scroll' for detail pages, 'fixed' for cards/banners
+        mode: 'scroll' | 'fixed';
+    };
+    styleConfig?: {
+        font: 'pretendard' | 'chosun' | 'gmarket';
+        primaryColor: string; // Brand/Button Colors
+        backgroundColor: string; // Section Background Colors
     };
 }

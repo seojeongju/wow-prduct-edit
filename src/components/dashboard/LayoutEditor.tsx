@@ -149,32 +149,101 @@ export default function LayoutEditor() {
                 </p>
             </div>
 
-            {/* Theme Selector */}
-            <div className="space-y-3">
+            {/* Style Details */}
+            <div className="space-y-4">
                 <Label className="flex items-center gap-2">
-                    <Palette className="w-4 h-4" /> 테마 선택
+                    <Palette className="w-4 h-4" /> 스타일 설정
                 </Label>
-                <div className="grid grid-cols-3 gap-3">
-                    {[
-                        { id: 'modern', name: '모던 (Modern)', color: 'bg-indigo-500' },
-                        { id: 'luxury', name: '럭셔리 (Luxury)', color: 'bg-slate-900' },
-                        { id: 'pop', name: '팝 (Pop)', color: 'bg-amber-500' },
-                    ].map(t => (
-                        <button
-                            key={t.id}
-                            onClick={() => setTheme(t.id as any)}
-                            className={cn(
-                                "flex items-center gap-2 px-3 py-3 rounded-xl border-2 transition-all",
-                                theme === t.id ? "border-indigo-600 bg-indigo-50 ring-1 ring-indigo-500/20" : "border-slate-200 bg-white hover:border-slate-300"
-                            )}
-                        >
-                            <div className={`w-3 h-3 rounded-full ${t.color}`} />
-                            <span className="text-xs font-bold text-slate-700">{t.name}</span>
-                        </button>
-                    ))}
+
+                <div className="p-4 bg-white border border-slate-200 rounded-xl space-y-5 shadow-sm">
+
+                    {/* 1. Theme Presets (Quick Apply) */}
+                    <div className="space-y-2">
+                        <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Quick Preset</span>
+                        <div className="grid grid-cols-3 gap-2">
+                            {[
+                                { id: 'modern', name: '모던', color: '#4f46e5', bg: '#ffffff', font: 'pretendard' },
+                                { id: 'luxury', name: '럭셔리', color: '#1a1a1a', bg: '#f8f8f8', font: 'chosun' },
+                                { id: 'pop', name: '팝', color: '#f59e0b', bg: '#fffbeb', font: 'gmarket' },
+                            ].map(t => (
+                                <button
+                                    key={t.id}
+                                    onClick={() => updateProductData({
+                                        styleConfig: {
+                                            font: t.font as any,
+                                            primaryColor: t.color,
+                                            backgroundColor: t.bg
+                                        }
+                                    })}
+                                    className="px-3 py-2 rounded-lg border border-slate-200 hover:border-indigo-400 hover:bg-slate-50 transition-all text-xs font-semibold text-slate-700"
+                                >
+                                    {t.name}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="w-full h-[1px] bg-slate-100" />
+
+                    {/* 2. Detailed Controls */}
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <span className="text-[10px] text-slate-500 font-bold uppercase">Font Family</span>
+                            <div className="flex flex-col gap-1.5">
+                                {[
+                                    { id: 'pretendard', name: '프리텐다드 (고딕)' },
+                                    { id: 'chosun', name: '조선일보 (명조)' },
+                                    { id: 'gmarket', name: 'G마켓 (타이틀)' },
+                                ].map(f => (
+                                    <label key={f.id} className="flex items-center gap-2 cursor-pointer group">
+                                        <input
+                                            type="radio"
+                                            name="font"
+                                            checked={productData.styleConfig?.font === f.id}
+                                            onChange={() => updateProductData({ styleConfig: { ...productData.styleConfig!, font: f.id as any } })}
+                                            className="accent-indigo-600"
+                                        />
+                                        <span className="text-xs text-slate-600 group-hover:text-indigo-600 transition-colors">{f.name}</span>
+                                    </label>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="space-y-3">
+                            <div className="space-y-1">
+                                <span className="text-[10px] text-slate-500 font-bold uppercase">Primary Color</span>
+                                <div className="flex items-center gap-2">
+                                    <div className="w-8 h-8 rounded-full border border-slate-200 overflow-hidden relative">
+                                        <input
+                                            type="color"
+                                            value={productData.styleConfig?.primaryColor || '#4f46e5'}
+                                            onChange={(e) => updateProductData({ styleConfig: { ...productData.styleConfig!, primaryColor: e.target.value } })}
+                                            className="absolute inset-0 w-[150%] h-[150%] -translate-x-1/4 -translate-y-1/4 p-0 border-0 cursor-pointer"
+                                        />
+                                    </div>
+                                    <span className="text-xs text-slate-500 font-mono">{productData.styleConfig?.primaryColor}</span>
+                                </div>
+                            </div>
+
+                            <div className="space-y-1">
+                                <span className="text-[10px] text-slate-500 font-bold uppercase">Content Bg</span>
+                                <div className="flex items-center gap-2">
+                                    <div className="w-8 h-8 rounded-full border border-slate-200 overflow-hidden relative">
+                                        <input
+                                            type="color"
+                                            value={productData.styleConfig?.backgroundColor || '#ffffff'}
+                                            onChange={(e) => updateProductData({ styleConfig: { ...productData.styleConfig!, backgroundColor: e.target.value } })}
+                                            className="absolute inset-0 w-[150%] h-[150%] -translate-x-1/4 -translate-y-1/4 p-0 border-0 cursor-pointer"
+                                        />
+                                    </div>
+                                    <span className="text-xs text-slate-500 font-mono">{productData.styleConfig?.backgroundColor}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
-
             {/* Canvas Size Settings (New) */}
             <div className="space-y-3">
                 <Label className="flex items-center gap-2">
