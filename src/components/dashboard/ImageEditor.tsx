@@ -6,7 +6,7 @@ import { Download, Eraser, Image as ImageIcon, Check, Loader2, Undo, PaintBucket
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { useStore } from '@/store/useStore';
-import { cn } from '@/lib/utils';
+import { cn, downloadImage } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 
 export default function ImageEditor() {
@@ -19,6 +19,9 @@ export default function ImageEditor() {
     const [isProcessing, setIsProcessing] = useState(false);
     const [selectedBg, setSelectedBg] = useState<string>('transparent');
     const [customColor, setCustomColor] = useState('#ffffff');
+
+    // Determine the current image being viewed
+    const currentImage = activeTab === 'edit' && processedImage ? processedImage : productData.imageUrl;
 
     // Background Options (Existing)
     const backgrounds = [
@@ -84,7 +87,7 @@ export default function ImageEditor() {
 
             {/* Main Preview Area */}
             <div className="relative w-full aspect-square bg-slate-100 rounded-2xl overflow-hidden border border-slate-200 shadow-inner flex items-center justify-center group">
-                {!productData.imageUrl ? (
+                {!currentImage ? (
                     <div className="text-slate-400 flex flex-col items-center">
                         <ImageIcon className="w-12 h-12 mb-2 opacity-50" />
                         <span className="text-sm">이미지가 없습니다</span>
@@ -99,10 +102,23 @@ export default function ImageEditor() {
 
                         {/* Image Layer */}
                         <img
-                            src={activeTab === 'edit' && processedImage ? processedImage : productData.imageUrl}
+                            src={currentImage}
                             alt="Product"
                             className="relative z-10 max-w-[80%] max-h-[80%] object-contain transition-transform duration-500 group-hover:scale-105"
                         />
+
+                        {/* Floating Download Button */}
+                        <div className="absolute top-4 right-4 z-30 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Button
+                                size="icon"
+                                variant="secondary"
+                                className="rounded-full shadow-lg bg-white/90 backdrop-blur"
+                                onClick={() => downloadImage(currentImage, `smart-detail-${Date.now()}.png`)}
+                                title="이미지 다운로드"
+                            >
+                                <Download className="w-4 h-4 text-slate-700" />
+                            </Button>
+                        </div>
                     </>
                 )}
 
