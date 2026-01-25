@@ -10,6 +10,7 @@ import ImageEditor from '@/components/dashboard/ImageEditor';
 import CopyEditor from '@/components/dashboard/CopyEditor';
 import LayoutEditor from '@/components/dashboard/LayoutEditor';
 import ExportPanel from '@/components/dashboard/ExportPanel';
+import Logo from '@/components/ui/Logo';
 
 export default function Home() {
   const { currentStep, setStep, productData, updateProductData, isLoading, setLoading, generateCopy } = useStore();
@@ -31,12 +32,9 @@ export default function Home() {
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-sky-500/10 rounded-full blur-[100px] pointer-events-none" />
 
       {/* Header */}
-      <header className="flex-none h-16 px-6 lg:px-10 flex items-center justify-between z-20 border-b border-slate-200/60 bg-white/50 backdrop-blur-md">
+      <header className="flex-none h-20 px-6 lg:px-10 flex items-center justify-between z-20 border-b border-slate-200/60 bg-white/50 backdrop-blur-md">
         <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/30">
-            <Sparkles className="w-5 h-5" />
-          </div>
-          <span className="font-bold text-slate-900">Smart Detail</span>
+          <Logo className="h-16 w-auto" />
         </div>
 
         {/* Stepper (Desktop) */}
