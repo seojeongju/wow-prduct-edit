@@ -10,6 +10,7 @@ import { useStore } from '@/store/useStore'; // Assuming this path for useStore
 import { Button } from '@/components/ui/button'; // Assuming this path for Button
 import ImageEditor from '@/components/dashboard/ImageEditor'; // Assuming this path for Button
 import CopyEditor from '@/components/dashboard/CopyEditor';
+import LayoutEditor from '@/components/dashboard/LayoutEditor'; // Import added
 
 export default function Home() {
   const { currentStep, setStep, productData, updateProductData, isLoading, setLoading, generateCopy } = useStore();
@@ -102,13 +103,15 @@ export default function Home() {
             <ImageEditor />
           )}
 
-          {currentStep > 2 && (
+          {currentStep === 3 && (
+            <LayoutEditor />
+          )}
+
+          {currentStep > 3 && (
             <div className="p-10 flex flex-col items-center justify-center h-full text-center space-y-4">
-              <h2 className="text-xl font-bold">디자인 & 내보내기 (준비중)</h2>
-              <p className="text-slate-500 text-sm">
-                Step {currentStep} 개발 진행 중입니다.
-              </p>
-              <Button onClick={() => setStep(currentStep - 1)} variant="outline">이전 단계로</Button>
+              {/* Final Step Logic (Coming Soon) */}
+              <h2 className="text-xl font-bold">완성 (Step 4)</h2>
+              <p className="text-slate-500">곧 구현될 예정입니다.</p>
             </div>
           )}
 
