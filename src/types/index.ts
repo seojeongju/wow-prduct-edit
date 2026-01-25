@@ -9,5 +9,6 @@ export interface ProductData {
         features?: string;
         trust?: string;
         closing?: string;
-    }
+    };
+    layoutOrder?: string[]; // e.g. ['hook', 'image', 'features', ...]
 }

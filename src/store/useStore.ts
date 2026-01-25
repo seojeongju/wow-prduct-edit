@@ -26,6 +26,7 @@ export const useStore = create<AppState>((set, get) => ({
         targetAudience: '',
         tone: 'professional',
         imageUrl: null,
+        layoutOrder: ['hook', 'image', 'features', 'trust', 'closing'],
     },
 
     setStep: (step) => set({ currentStep: step }),

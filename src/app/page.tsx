@@ -1,16 +1,14 @@
-"use client";
-
 import React, { useState } from 'react';
 import ProductInput from '@/components/dashboard/ProductInput';
-import MobilePreview from '@/components/preview/MobilePreview';
+import DevicePreview from '@/components/preview/DevicePreview'; // Updated Import
 import { ProductData } from '@/types';
 import { Sparkles, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useStore } from '@/store/useStore'; // Assuming this path for useStore
-import { Button } from '@/components/ui/button'; // Assuming this path for Button
-import ImageEditor from '@/components/dashboard/ImageEditor'; // Assuming this path for Button
+import { useStore } from '@/store/useStore';
+import { Button } from '@/components/ui/button';
+import ImageEditor from '@/components/dashboard/ImageEditor';
 import CopyEditor from '@/components/dashboard/CopyEditor';
-import LayoutEditor from '@/components/dashboard/LayoutEditor'; // Import added
+import LayoutEditor from '@/components/dashboard/LayoutEditor';
 
 export default function Home() {
   const { currentStep, setStep, productData, updateProductData, isLoading, setLoading, generateCopy } = useStore();
@@ -29,6 +27,7 @@ export default function Home() {
       {/* Background Decor */}
       <div className="absolute inset-0 bg-grid-pattern opacity-[0.4] z-0 pointer-events-none" />
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-sky-500/10 rounded-full blur-[100px] pointer-events-none" />
 
       {/* Header */}
       <header className="flex-none h-16 px-6 lg:px-10 flex items-center justify-between z-20 border-b border-slate-200/60 bg-white/50 backdrop-blur-md">
@@ -117,14 +116,14 @@ export default function Home() {
 
         </div>
 
-        {/* Right Panel: Preview Studio (Always Visible but updates based on context) */}
+        {/* Right Panel: Preview Studio */}
         <div className="hidden lg:flex flex-1 items-center justify-center bg-slate-100/50 relative overflow-hidden">
-          <div className="relative z-10 scale-[0.85] xl:scale-95 transition-transform duration-500">
-            <MobilePreview data={productData} isLoading={isLoading} />
+          <div className="relative z-10 w-full h-full flex items-center justify-center p-8">
+            <DevicePreview data={productData} isLoading={isLoading} />
           </div>
 
           {/* Global Next/Prev Navigation for Demo */}
-          <div className="absolute bottom-8 right-8 flex gap-2">
+          <div className="absolute bottom-8 right-8 flex gap-2 z-20">
             <Button
               variant="ghost"
               onClick={() => setStep(Math.max(1, currentStep - 1))}
@@ -134,10 +133,15 @@ export default function Home() {
             </Button>
             <Button
               className="bg-slate-900 text-white"
-              onClick={() => setStep(Math.min(4, currentStep + 1))}
-              disabled={currentStep === 4}
+              onClick={() => {
+                if (currentStep === 4) {
+                  alert("최종 완성! HTML 추출 기능을 준비중입니다.");
+                } else {
+                  setStep(Math.min(4, currentStep + 1));
+                }
+              }}
             >
-              다음 단계 ({currentStep + 1}/4)
+              {currentStep === 4 ? "다운로드" : `다음 단계 (${currentStep + 1}/4)`}
             </Button>
           </div>
         </div>

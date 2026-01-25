@@ -75,14 +75,39 @@ function SortableItem({ id, type, title, content, isActive }: SortableItemProps)
 
 // --- Main Editor Component ---
 export default function LayoutEditor() {
-    const { productData, currentStep, setStep } = useStore();
-    const [items, setItems] = useState([
-        { id: 'hook', type: 'text', title: '📢 도입부 (Hook)', content: productData.generatedContent?.hook || '' },
-        { id: 'image', type: 'image', title: '🖼️ 대표 이미지', content: productData.imageUrl || '이미지 없음' },
-        { id: 'features', type: 'features', title: '✨ 핵심 특징', content: productData.generatedContent?.features || '' },
-        { id: 'trust', type: 'text', title: '🤝 신뢰/리뷰', content: productData.generatedContent?.trust || '' },
-        { id: 'closing', type: 'text', title: '🔥 클로징', content: productData.generatedContent?.closing || '' },
-    ]);
+    const { productData, currentStep, setStep, updateProductData } = useStore();
+
+    // Define available block definitions
+    const blockDefinitions = {
+        hook: { type: 'text', title: '📢 도입부 (Hook)' },
+        image: { type: 'image', title: '🖼️ 대표 이미지' },
+        features: { type: 'features', title: '✨ 핵심 특징' },
+        trust: { type: 'text', title: '🤝 신뢰/리뷰' },
+        closing: { type: 'text', title: '🔥 클로징' },
+    };
+
+    // Initialize items based on global layoutOrder
+    const [items, setItems] = useState(() => {
+        const order = productData.layoutOrder || ['hook', 'image', 'features', 'trust', 'closing'];
+        return order.map(id => {
+            const def = blockDefinitions[id as keyof typeof blockDefinitions];
+            let content = '';
+            if (id === 'image') content = productData.imageUrl || '이미지 없음';
+            else content = productData.generatedContent?.[id as keyof typeof productData.generatedContent] || '';
+
+            return { id, ...def, content };
+        });
+    });
+
+    // Update local items when productData changes (e.g. image update)
+    useEffect(() => {
+        setItems(prev => prev.map(item => {
+            let content = '';
+            if (item.id === 'image') content = productData.imageUrl || '이미지 없음';
+            else content = productData.generatedContent?.[item.id as keyof typeof productData.generatedContent] || '';
+            return { ...item, content };
+        }));
+    }, [productData]);
 
     const [theme, setTheme] = useState<'modern' | 'luxury' | 'pop'>('modern');
 
@@ -100,7 +125,13 @@ export default function LayoutEditor() {
             setItems((items) => {
                 const oldIndex = items.findIndex((item) => item.id === active.id);
                 const newIndex = items.findIndex((item) => item.id === over.id);
-                return arrayMove(items, oldIndex, newIndex);
+                const newItems = arrayMove(items, oldIndex, newIndex);
+
+                // Sync with Global Store
+                const newOrder = newItems.map(i => i.id);
+                updateProductData({ layoutOrder: newOrder });
+
+                return newItems;
             });
         }
     }
