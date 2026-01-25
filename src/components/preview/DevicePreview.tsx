@@ -52,7 +52,7 @@ export default function DevicePreview({ data, isLoading }: DevicePreviewProps) {
                 return (
                     <section className="py-8 px-6 text-center border-y" style={{ borderColor: `${primaryColor}20`, backgroundColor: `${config.backgroundColor}` }}>
                         <div className="text-lg mb-2" style={{ color: primaryColor }}>★★★★★</div>
-                        <p className="font-medium whitespace-pre-line" style={{ color: textColor }}>"{content?.trust}"</p>
+                        <p className="font-medium whitespace-pre-line" style={{ color: textColor }}>&quot;{content?.trust}&quot;</p>
                     </section>
                 );
             case 'closing':
