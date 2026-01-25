@@ -129,7 +129,7 @@ export default function DevicePreview({ data, isLoading }: DevicePreviewProps) {
                             <p className="text-sm font-medium text-slate-400 animate-pulse">AI가 제작 중입니다...</p>
                         </div>
                     ) : (
-                        <div className="flex flex-col min-h-full">
+                        <div id="preview-capture-area" className="flex flex-col min-h-full bg-white">
                             {/* Render blocks in order */}
                             {layoutOrder.map((blockId) => (
                                 <React.Fragment key={blockId}>

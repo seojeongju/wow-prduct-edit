@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import ImageEditor from '@/components/dashboard/ImageEditor';
 import CopyEditor from '@/components/dashboard/CopyEditor';
 import LayoutEditor from '@/components/dashboard/LayoutEditor';
+import ExportPanel from '@/components/dashboard/ExportPanel';
 
 export default function Home() {
   const { currentStep, setStep, productData, updateProductData, isLoading, setLoading, generateCopy } = useStore();
@@ -106,12 +107,8 @@ export default function Home() {
             <LayoutEditor />
           )}
 
-          {currentStep > 3 && (
-            <div className="p-10 flex flex-col items-center justify-center h-full text-center space-y-4">
-              {/* Final Step Logic (Coming Soon) */}
-              <h2 className="text-xl font-bold">완성 (Step 4)</h2>
-              <p className="text-slate-500">곧 구현될 예정입니다.</p>
-            </div>
+          {currentStep === 4 && (
+            <ExportPanel />
           )}
 
         </div>
@@ -123,27 +120,23 @@ export default function Home() {
           </div>
 
           {/* Global Next/Prev Navigation for Demo */}
-          <div className="absolute bottom-8 right-8 flex gap-2 z-20">
-            <Button
-              variant="ghost"
-              onClick={() => setStep(Math.max(1, currentStep - 1))}
-              disabled={currentStep === 1}
-            >
-              이전
-            </Button>
-            <Button
-              className="bg-slate-900 text-white"
-              onClick={() => {
-                if (currentStep === 4) {
-                  alert("최종 완성! HTML 추출 기능을 준비중입니다.");
-                } else {
-                  setStep(Math.min(4, currentStep + 1));
-                }
-              }}
-            >
-              {currentStep === 4 ? "다운로드" : `다음 단계 (${currentStep + 1}/4)`}
-            </Button>
-          </div>
+          {currentStep < 4 && (
+            <div className="absolute bottom-8 right-8 flex gap-2 z-20">
+              <Button
+                variant="ghost"
+                onClick={() => setStep(Math.max(1, currentStep - 1))}
+                disabled={currentStep === 1}
+              >
+                이전
+              </Button>
+              <Button
+                className="bg-slate-900 text-white shadow-lg"
+                onClick={() => setStep(Math.min(4, currentStep + 1))}
+              >
+                다음 단계 ({currentStep + 1}/4)
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </main>
