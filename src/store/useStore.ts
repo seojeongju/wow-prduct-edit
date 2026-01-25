@@ -13,6 +13,7 @@ interface AppState {
     updateProductData: (data: Partial<ProductData>) => void;
     setLoading: (loading: boolean) => void;
     generateCopy: () => Promise<void>;
+    generateImage: (prompt: string) => Promise<void>;
 }
 
 export const useStore = create<AppState>((set, get) => ({
@@ -67,6 +68,33 @@ export const useStore = create<AppState>((set, get) => ({
         } catch (error) {
             console.error(error);
             alert("상세페이지 생성에 실패했습니다. 잠시 후 다시 시도해주세요.");
+            set({ isLoading: false });
+        }
+    },
+
+    generateImage: async (prompt: string) => {
+        set({ isLoading: true });
+        try {
+            const response = await fetch('/api/generate-image', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt, type: 'generation' }),
+            });
+
+            if (!response.ok) throw new Error("Image Generation Failed");
+
+            const data = await response.json();
+            const generatedUrl = data.url;
+
+            // Update product image with generated one
+            set((state) => ({
+                productData: { ...state.productData, imageUrl: generatedUrl },
+                isLoading: false
+            }));
+
+        } catch (error) {
+            console.error(error);
+            alert("이미지 생성에 실패했습니다.");
             set({ isLoading: false });
         }
     }
