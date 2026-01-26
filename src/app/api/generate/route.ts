@@ -1,6 +1,4 @@
-
 import { NextResponse } from 'next/server';
-import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // Define the response structure we expect from AI
 const MOCK_RESPONSE = {
@@ -25,38 +23,56 @@ export async function POST(req: Request) {
             return NextResponse.json(MOCK_RESPONSE);
         }
 
-        // 2. Initialize Google Gemini
-        const genAI = new GoogleGenerativeAI(apiKey);
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        // 2. Direct Fetch to Gemini API (Edge Compatible)
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
         // 3. Construct the prompt
         const prompt = `
       당신은 대한민국 상위 1% 매출을 올리는 '상세페이지 기획자'이자 '카피라이터'입니다.
       사용자가 입력한 [기초 자료]를 바탕으로, 소비자가 구매 버튼을 누를 수밖에 없는 매력적인 상세페이지 문구를 작성해주세요.
 
-      [기조 자료 분석]
-      1. 상품명: ${productName} (이 상품의 핵심 아이덴티티입니다.)
-      2. 타겟 고객: ${targetAudience} (이 문구는 오직 이들을 설득하기 위해 작성되어야 합니다.)
-      3. 핵심 장점: ${benefits.join(', ')} (이 장점들이 단순한 기능이 아니라, 고객의 삶을 어떻게 바꿔주는지 '혜택(Benefit)' 관점으로 변환해서 작성하세요.)
+      [기초 자료 분석]
+      1. 상품명: ${productName}
+      2. 타겟 고객: ${targetAudience}
+      3. 핵심 장점: ${benefits.join(', ')}
       
       [작성 가이드]
       - 톤앤매너: ${tone === 'emotional' ? '감성적이고 공감가는 에세이 톤' : tone === 'witty' ? '재치있고 유머러스한 친구 같은 톤' : '전문적이고 신뢰감 있는 비즈니스 톤'}
-      - 문체: 가독성을 위해 간결하고 명확하게. 모바일 환경을 고려하여 줄바꿈을 적절히 활용.
+      - 반환 형식: 반드시 아래 JSON 포맷을 준수 (마크다운 없이 순수 JSON 문자열만)
       
-      [반환 포맷 (JSON Only)]
-      반드시 아래 JSON 형식으로만 응답하세요. (마크다운 포맷 제외)
       {
-        "hook": "고객의 문제 상황(Pain Point)을 짚어내고, 우리 상품이 해결책임을 암시하는 강렬한 첫 문장. (타겟 고객이 듣고 싶어하는 말로 시작)",
-        "features": "입력된 3가지 핵심 장점을 하나씩 확장하여 서술. 각 장점마다 이모지를 활용하고, '기능'이 아닌 '고객이 얻는 이득'으로 치환하여 설득력 있게 작성.",
-        "trust": "고객이 안심하고 구매할 수 있는 신뢰 강화 문구. 가상의 리뷰 수치나 만족도 통계, 혹은 품질 보증 정책을 언급하여 불안감 해소.",
-        "closing": "지금 당장 구매해야 하는 이유. 망설이는 고객의 등을 떠미는 강력한 한 마디와 행동 유도(Call To Action)."
+        "hook": "고객의 문제(Pain Point)를 찌르는 강렬한 첫 문장 (2-3줄)",
+        "features": "핵심 장점 3가지를 '고객의 이득(Benefit)'으로 변환하여 설득력 있게 서술 (이모지 활용)",
+        "trust": "신뢰도를 높이는 가상의 리뷰 데이터나 품질 보증 언급 (2-3줄)",
+        "closing": "구매를 망설이는 고객을 위한 강력한 행동 유도(CTA) (1-2줄)"
       }
     `;
 
-        // 4. Generate Content
-        const result = await model.generateContent(prompt);
-        const response = await result.response;
-        let text = response.text();
+        // 4. Call Gemini API via Fetch
+        const apiResponse = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                contents: [{
+                    parts: [{ text: prompt }]
+                }]
+            })
+        });
+
+        if (!apiResponse.ok) {
+            const errorData = await apiResponse.json();
+            console.error("Gemini API Error Details:", errorData);
+            throw new Error(errorData.error?.message || `Gemini API responded with ${apiResponse.status}`);
+        }
+
+        const data = await apiResponse.json();
+        let text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+        if (!text) {
+            throw new Error("No text generated from Gemini");
+        }
 
         // 5. Clean up JSON string (remove markdown code blocks if present)
         text = text.replace(/```json/g, '').replace(/```/g, '').trim();
@@ -65,10 +81,10 @@ export async function POST(req: Request) {
 
         return NextResponse.json(JSON.parse(text));
 
-    } catch (error) {
+    } catch (error: any) {
         console.error("AI Generation Error:", error);
         return NextResponse.json(
-            { error: "Failed to generate content" },
+            { error: error.message || "Failed to generate content" },
             { status: 500 }
         );
     }
