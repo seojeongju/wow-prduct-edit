@@ -14,57 +14,127 @@ interface DevicePreviewProps {
 export default function DevicePreview({ data, isLoading }: DevicePreviewProps) {
     const [viewMode, setViewMode] = useState<'mobile' | 'pc'>('mobile');
 
-    // Updated renderBlock to accept style config
+    // Updated renderBlock to be much more premium
     const renderBlock = (blockId: string, config: any) => {
         const content = data.generatedContent;
         if (!content && blockId !== 'image') return null;
 
-        // Use config for dynamic coloring
         const primaryColor = config.primaryColor || '#4f46e5';
-        // Calculate a text color that contrasts well (Keep simple for now: Dark for light bg)
+        const backgroundColor = config.backgroundColor || '#ffffff';
         const textColor = '#1e293b';
 
         switch (blockId) {
             case 'hook':
                 return (
-                    <section className="py-12 px-6 text-white text-center" style={{ backgroundColor: '#1e293b' }}>
-                        {/* Note: Hook is usually dark for impact, regardless of theme */}
-                        <h2 className="text-2xl font-bold leading-tight whitespace-pre-line">{content?.hook}</h2>
+                    <section
+                        className="py-20 px-8 text-white text-center relative overflow-hidden"
+                        style={{
+                            background: `linear-gradient(135deg, ${textColor} 0%, #334155 100%)`
+                        }}
+                    >
+                        {/* Subtle Background Pattern */}
+                        <div className="absolute inset-0 opacity-10 pointer-events-none bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white via-transparent to-transparent" />
+
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.8 }}
+                        >
+                            <h2 className="text-3xl lg:text-4xl font-black tracking-tighter leading-[1.1] whitespace-pre-line mb-4 italic">
+                                {content?.hook}
+                            </h2>
+                            <div className="w-12 h-1 bg-white/30 mx-auto rounded-full" />
+                        </motion.div>
                     </section>
                 );
             case 'image':
                 if (!data.imageUrl) return null;
                 return (
-                    <div className="w-full aspect-square bg-slate-100 relative">
-                        <img src={data.imageUrl} alt="Product" className="w-full h-full object-cover" />
+                    <div className="w-full relative bg-white py-12 flex items-center justify-center overflow-hidden">
+                        <div className="absolute inset-0 bg-slate-50/50" />
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            whileInView={{ scale: 1, opacity: 1 }}
+                            viewport={{ once: true }}
+                            className="relative z-10 w-[85%] aspect-square rounded-3xl overflow-hidden shadow-2xl border-8 border-white group"
+                        >
+                            <img
+                                src={data.imageUrl}
+                                alt="Product"
+                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                            />
+                        </motion.div>
                     </div>
                 );
             case 'features':
                 return (
-                    <section className="py-10 px-6">
-                        <h3 className="text-lg font-bold mb-4 border-b pb-2" style={{ color: textColor, borderColor: primaryColor }}>Why This Product?</h3>
-                        <div className="space-y-4 whitespace-pre-line leading-relaxed" style={{ color: '#475569' }}>
-                            {content?.features}
+                    <section className="py-16 px-8" style={{ backgroundColor }}>
+                        <div className="text-center mb-10">
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em] mb-2 block" style={{ color: primaryColor }}>Main Benefits</span>
+                            <h3 className="text-2xl font-bold tracking-tight" style={{ color: textColor }}>
+                                오직 당신을 위해 <br /> 준비된 <span style={{ color: primaryColor }}>3가지 핵심 경험</span>
+                            </h3>
+                        </div>
+                        <div className="space-y-6">
+                            {content?.features?.split('\n').filter(line => line.trim()).map((feature, idx) => (
+                                <motion.div
+                                    key={idx}
+                                    initial={{ opacity: 0, x: -20 }}
+                                    whileInView={{ opacity: 1, x: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ delay: idx * 0.15 }}
+                                    className="p-5 rounded-2xl border bg-white shadow-sm border-slate-100 flex gap-4 items-start group hover:border-indigo-200 transition-colors"
+                                >
+                                    <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-none font-bold text-sm bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                                        {idx + 1}
+                                    </div>
+                                    <p className="text-sm font-medium leading-relaxed text-slate-600 whitespace-pre-line">
+                                        {feature.replace(/^[0-9.]\s?/, '')}
+                                    </p>
+                                </motion.div>
+                            ))}
                         </div>
                     </section>
                 );
             case 'trust':
                 return (
-                    <section className="py-8 px-6 text-center border-y" style={{ borderColor: `${primaryColor}20`, backgroundColor: `${config.backgroundColor}` }}>
-                        <div className="text-lg mb-2" style={{ color: primaryColor }}>★★★★★</div>
-                        <p className="font-medium whitespace-pre-line" style={{ color: textColor }}>&quot;{content?.trust}&quot;</p>
+                    <section className="py-16 px-8 text-center relative overflow-hidden" style={{ backgroundColor: '#f8fafc' }}>
+                        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
+                        <div className="flex justify-center gap-1 mb-6">
+                            {[1, 2, 3, 4, 5].map(s => (
+                                <svg key={s} className="w-5 h-5 fill-amber-400" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                            ))}
+                        </div>
+                        <blockquote className="text-xl font-medium italic tracking-tight mb-4 px-4 line-clamp-3" style={{ color: '#334155' }}>
+                            &quot;{content?.trust?.split('\n')[0]}&quot;
+                        </blockquote>
+                        <p className="text-sm text-slate-400 font-bold tracking-widest uppercase">Verified Customer Review</p>
                     </section>
                 );
             case 'closing':
                 return (
-                    <section className="py-12 px-6 text-white text-center" style={{ backgroundColor: primaryColor }}>
-                        <h3 className="text-xl font-bold mb-4 whitespace-pre-line">{content?.closing}</h3>
-                        <button
-                            className="px-8 py-3 bg-white rounded-full font-bold shadow-lg hover:scale-105 transition-transform"
-                            style={{ color: primaryColor }}
+                    <section
+                        className="py-16 px-8 text-white text-center relative"
+                        style={{
+                            background: `linear-gradient(135deg, ${primaryColor} 0%, ${primaryColor}dd 100%)`
+                        }}
+                    >
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
+                            viewport={{ once: true }}
                         >
-                            지금 구매하기
-                        </button>
+                            <h3 className="text-2xl font-black mb-6 whitespace-pre-line tracking-tight px-2">{content?.closing}</h3>
+                            <button
+                                className="w-full py-5 bg-white rounded-2xl font-black shadow-2xl hover:bg-slate-50 hover:scale-[1.02] active:scale-[0.98] transition-all text-lg flex items-center justify-center gap-2"
+                                style={{ color: primaryColor }}
+                            >
+                                지금 혜택 받기
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M9 5l7 7-7 7" /></svg>
+                            </button>
+                            <p className="mt-4 text-[10px] opacity-60 font-medium">실시간 주문 폭주! 재고 소진 임박</p>
+                        </motion.div>
                     </section>
                 );
             default:
