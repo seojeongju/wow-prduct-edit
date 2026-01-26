@@ -23,7 +23,7 @@ export const useStore = create<AppState>()(
 
             productData: {
                 productName: '',
-                benefits: [],
+                benefits: ['', '', ''],
                 targetAudience: '',
                 tone: 'professional',
                 imageUrl: null,
@@ -113,7 +113,7 @@ export const useStore = create<AppState>()(
                 currentStep: 1,
                 productData: {
                     productName: '',
-                    benefits: [],
+                    benefits: ['', '', ''],
                     targetAudience: '',
                     tone: 'professional',
                     imageUrl: null,
