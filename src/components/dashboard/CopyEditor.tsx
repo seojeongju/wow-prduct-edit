@@ -24,7 +24,7 @@ export default function CopyEditor() {
     };
 
     return (
-        <div className="p-6 pb-32 space-y-8 max-w-xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="p-6 pb-32 space-y-8 w-full max-w-none mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
 
             <div className="space-y-1">
                 <div className="flex items-center gap-2">

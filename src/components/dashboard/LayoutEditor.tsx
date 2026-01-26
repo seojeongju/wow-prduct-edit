@@ -140,7 +140,7 @@ export default function LayoutEditor() {
     // 현재는 UI 데모 구현
 
     return (
-        <div className="p-6 pb-32 space-y-8 max-w-xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="p-6 pb-32 space-y-8 w-full max-w-none mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
 
             <div className="space-y-1">
                 <h2 className="text-xl font-bold tracking-tight text-slate-900">디자인 편집</h2>

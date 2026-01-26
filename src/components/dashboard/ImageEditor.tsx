@@ -62,7 +62,7 @@ export default function ImageEditor() {
     const isBusy = isProcessing || isLoading;
 
     return (
-        <div className="p-6 pb-32 space-y-8 max-w-xl mx-auto">
+        <div className="p-6 pb-32 space-y-8 w-full max-w-none mx-auto">
             <div className="flex items-center justify-between">
                 <div className="space-y-1">
                     <h2 className="text-xl font-bold tracking-tight text-slate-900">이미지 스튜디오</h2>
