@@ -34,11 +34,11 @@ export async function POST(req: Request) {
       [기초 자료 분석]
       1. 상품명: ${productName}
       2. 타겟 고객: ${targetAudience}
-      3. 핵심 장점: ${benefits.join(', ')}
+      3. 핵심 장점: ${benefits.filter((b: string) => b.trim() !== '').join(', ')}
       
       [작성 가이드]
       - 톤앤매너: ${tone === 'emotional' ? '감성적이고 공감가는 에세이 톤' : tone === 'witty' ? '재치있고 유머러스한 친구 같은 톤' : '전문적이고 신뢰감 있는 비즈니스 톤'}
-      - 반환 형식: 반드시 아래 JSON 포맷을 준수 (마크다운 없이 순수 JSON 문자열만)
+      - 반환 형식: 반드시 아래 JSON 포맷을 준수하십시오. JSON 외에 다른 설명이나 마크다운(\`\`\`json ...)은 절대 포함하지 마십시오. 오직 순수한 JSON 문자열만 반환하십시오.
       
       {
         "hook": "고객의 문제(Pain Point)를 찌르는 강렬한 첫 문장 (2-3줄)",
@@ -57,7 +57,10 @@ export async function POST(req: Request) {
             body: JSON.stringify({
                 contents: [{
                     parts: [{ text: prompt }]
-                }]
+                }],
+                generationConfig: {
+                    responseMimeType: "application/json"
+                }
             })
         });
 
@@ -79,10 +82,16 @@ export async function POST(req: Request) {
 
         console.log("Gemini Output:", text);
 
-        return NextResponse.json(JSON.parse(text));
+        try {
+            const parsed = JSON.parse(text);
+            return NextResponse.json(parsed);
+        } catch (parseError) {
+            console.error("JSON Parse Error. Raw Text:", text);
+            throw new Error("AI returned invalid JSON format.");
+        }
 
     } catch (error: any) {
-        console.error("AI Generation Error:", error);
+        console.error("AI Generation Error details:", error);
         return NextResponse.json(
             { error: error.message || "Failed to generate content" },
             { status: 500 }
