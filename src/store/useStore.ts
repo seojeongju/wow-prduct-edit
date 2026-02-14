@@ -65,7 +65,17 @@ export const useStore = create<AppState>()(
                         body: JSON.stringify(productData),
                     });
 
-                    if (!response.ok) throw new Error("Generation Failed");
+                    if (!response.ok) {
+                        let errorMessage = "Generation Failed";
+                        try {
+                            const errorData = await response.json();
+                            errorMessage = errorData.error || errorData.message || errorMessage;
+                        } catch (e) {
+                            // If response is not JSON
+                            errorMessage = `Error ${response.status}: ${response.statusText}`;
+                        }
+                        throw new Error(errorMessage);
+                    }
 
                     const generatedContent = await response.json();
 
@@ -75,9 +85,9 @@ export const useStore = create<AppState>()(
                         // currentStep stays at 1
                     }));
 
-                } catch (error) {
-                    console.error(error);
-                    alert("생성 실패");
+                } catch (error: any) {
+                    console.error("Generate Copy Error:", error);
+                    alert(`생성 실패: ${error.message}`);
                     set({ isLoading: false });
                 }
             },

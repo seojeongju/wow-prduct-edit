@@ -34,7 +34,7 @@ export async function POST(req: Request) {
       [기초 자료 분석]
       1. 상품명: ${productName}
       2. 타겟 고객: ${targetAudience}
-      3. 핵심 장점: ${benefits.filter((b: string) => b.trim() !== '').join(', ')}
+      3. 핵심 장점: ${(Array.isArray(benefits) ? benefits : []).filter((b: any) => typeof b === 'string' && b.trim() !== '').join(', ')}
       
       [작성 가이드]
       - 톤앤매너: ${tone === 'emotional' ? '감성적이고 공감가는 에세이 톤' : tone === 'witty' ? '재치있고 유머러스한 친구 같은 톤' : '전문적이고 신뢰감 있는 비즈니스 톤'}
